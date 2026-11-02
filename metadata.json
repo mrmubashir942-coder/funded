@@ -1,0 +1,6 @@
+{
+  "name": "RYVEXIA FUNDING",
+  "description": "Premium prop trading firm application with institutional evaluation models, real-time simulated trading terminal, challenge engine, trader dashboard, and admin risk console.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
