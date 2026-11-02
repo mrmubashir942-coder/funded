@@ -11,15 +11,22 @@ export interface User {
   joinedDate: string;
 }
 
-export type ChallengeModel = '2-step' | '1-step' | 'instant';
-export type ChallengePhase = 'phase-1' | 'phase-2' | 'funded' | 'failed';
+export type ChallengeModel =
+  | '1-step'
+  | '2-step'
+  | '2-step-advanced'
+  | '3-step'
+  | 'instant'
+  | 'starter';
+
+export type ChallengePhase = 'phase-1' | 'phase-2' | 'phase-3' | 'funded' | 'failed';
 export type AccountStatus = 'active' | 'passed' | 'failed';
 
 export interface TraderAccount {
   id: string;
   accountNumber: string;
   title: string;
-  tierSize: number; // e.g. 100000
+  tierSize: number; // e.g. 5000, 10000, 25000, 50000, 100000, 200000
   initialBalance: number;
   balance: number;
   equity: number;
@@ -84,8 +91,23 @@ export interface ChallengeTierConfig {
     maxDrawdownPct: number;
     minTradingDays: number;
   };
+  twoStepAdvanced: {
+    phase1TargetPct: number;
+    phase2TargetPct: number;
+    dailyLossPct: number;
+    maxDrawdownPct: number;
+    minTradingDays: number;
+  };
   oneStep: {
     profitTargetPct: number;
+    dailyLossPct: number;
+    maxDrawdownPct: number;
+    minTradingDays: number;
+  };
+  threeStep: {
+    phase1TargetPct: number;
+    phase2TargetPct: number;
+    phase3TargetPct: number;
     dailyLossPct: number;
     maxDrawdownPct: number;
     minTradingDays: number;
@@ -93,6 +115,12 @@ export interface ChallengeTierConfig {
   instant: {
     dailyLossPct: number;
     maxDrawdownPct: number;
+  };
+  starter: {
+    profitTargetPct: number;
+    dailyLossPct: number;
+    maxDrawdownPct: number;
+    minTradingDays: number;
   };
   leverage: string;
   profitSplit: number;
@@ -141,4 +169,107 @@ export interface AppNotification {
   type: 'info' | 'success' | 'warning' | 'alert';
   timestamp: string;
   read: boolean;
+}
+
+export interface CouponCode {
+  code: string;
+  discountPct: number;
+  description: string;
+  active: boolean;
+  timesUsed: number;
+  expiry: string;
+}
+
+export interface AffiliateUser {
+  id: string;
+  referralCode: string;
+  totalReferrals: number;
+  totalVolume: number;
+  commissionRatePct: number;
+  pendingCommission: number;
+  paidCommission: number;
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  authorRole: string;
+  category: string;
+  readTime: string;
+  publishedAt: string;
+  tags: string[];
+}
+
+export interface TradeJournalEntry {
+  id: string;
+  accountId: string;
+  date: string;
+  title: string;
+  notes: string;
+  emotion: 'DISCIPLINED' | 'FOMO' | 'PATIENT' | 'REVENGE';
+  pnl: number;
+  tradesCount: number;
+}
+
+export interface LeaderboardTrader {
+  rank: number;
+  name: string;
+  country: string;
+  avatar: string;
+  accountTier: string;
+  totalGainPct: number;
+  winRate: number;
+  profitFactor: number;
+  payoutAmount: number;
+}
+
+export interface AchievementBadge {
+  id: string;
+  title: string;
+  description: string;
+  iconName: string;
+  unlocked: boolean;
+  unlockedAt?: string;
+  category: 'EVALUATION' | 'DISCIPLINE' | 'PERFORMANCE';
+}
+
+export interface LoyaltyAccount {
+  points: number;
+  tier: 'BRONZE' | 'SILVER' | 'GOLD' | 'BLACK';
+  rewardsRedeemed: number;
+  history: {
+    id: string;
+    desc: string;
+    pts: number;
+    date: string;
+  }[];
+}
+
+export interface AuditLogEntry {
+  id: string;
+  timestamp: string;
+  actor: string;
+  action: string;
+  category: 'RISK' | 'TRADE' | 'PAYOUT' | 'AUTH' | 'SYSTEM';
+  details: string;
+  severity: 'INFO' | 'WARNING' | 'CRITICAL';
+}
+
+export interface OrderHistoryItem {
+  id: string;
+  orderNumber: string;
+  date: string;
+  planName: string;
+  size: number;
+  originalPrice: number;
+  discountApplied: number;
+  finalPrice: number;
+  couponCode?: string;
+  paymentMethod: string;
+  status: 'COMPLETED' | 'PENDING' | 'REFUNDED';
+  accountId: string;
 }

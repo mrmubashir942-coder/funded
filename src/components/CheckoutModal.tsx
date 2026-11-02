@@ -2,37 +2,78 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   X,
-  Shield,
   CreditCard,
-  Lock,
   CheckCircle2,
   Sparkles,
   ArrowRight,
   TrendingUp,
   Copy,
-  Check
+  Check,
+  Tag,
+  AlertCircle
 } from 'lucide-react';
-import { TraderAccount } from '../types';
+import { TraderAccount, ChallengeModel } from '../types';
 
 export const CheckoutModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
   onClose
 }) => {
-  const { challengeTiers, checkoutData, setCheckoutData, purchaseChallenge, setCurrentView, setActiveTab } = useApp();
+  const {
+    challengeTiers,
+    checkoutData,
+    setCheckoutData,
+    purchaseChallenge,
+    validateCoupon,
+    setCurrentView,
+    setActiveTab
+  } = useApp();
 
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'crypto' | 'wire'>('card');
   const [createdAccount, setCreatedAccount] = useState<TraderAccount | null>(null);
   const [copied, setCopied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [couponInput, setCouponInput] = useState(checkoutData.couponCode || '');
+  const [couponMessage, setCouponMessage] = useState<{ text: string; error: boolean } | null>(null);
 
   if (!isOpen) return null;
 
   const currentTier = challengeTiers.find((t) => t.id === checkoutData.tierId) || challengeTiers[3];
 
-  let totalPrice = currentTier.fee;
-  if (checkoutData.addOnNinetySplit) totalPrice += 39;
-  if (checkoutData.addOnBiWeekly) totalPrice += 29;
-  if (checkoutData.addOnNoMinDays) totalPrice += 49;
+  let rawPrice = currentTier.fee;
+  if (checkoutData.addOnNinetySplit) rawPrice += 39;
+  if (checkoutData.addOnBiWeekly) rawPrice += 29;
+  if (checkoutData.addOnNoMinDays) rawPrice += 49;
+
+  const discountAmount = checkoutData.discountPct
+    ? Math.round((rawPrice * checkoutData.discountPct) / 100)
+    : 0;
+  const totalPrice = Math.max(0, rawPrice - discountAmount);
+
+  const handleApplyCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!couponInput.trim()) return;
+    const res = validateCoupon(couponInput.trim());
+    if (res.valid) {
+      setCheckoutData((prev) => ({
+        ...prev,
+        couponCode: couponInput.trim().toUpperCase(),
+        discountPct: res.discountPct
+      }));
+      setCouponMessage({ text: res.message, error: false });
+    } else {
+      setCouponMessage({ text: res.message, error: true });
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCheckoutData((prev) => ({
+      ...prev,
+      couponCode: undefined,
+      discountPct: undefined
+    }));
+    setCouponInput('');
+    setCouponMessage(null);
+  };
 
   const handleCompleteOrder = () => {
     setIsProcessing(true);
@@ -45,7 +86,9 @@ export const CheckoutModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
 
   const copyCreds = () => {
     if (!createdAccount) return;
-    navigator.clipboard.writeText(`Server: Ryvexia-SimLive\nLogin: ${createdAccount.accountNumber}\nPassword: RyvexiaDemo2026!`);
+    navigator.clipboard.writeText(
+      `Server: Ryvexia-SimLive\nLogin: ${createdAccount.accountNumber}\nPassword: RyvexiaDemo2026!`
+    );
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -86,8 +129,10 @@ export const CheckoutModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
               <h2 className="text-2xl font-extrabold text-white">Evaluation Account Activated!</h2>
               <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
                 Your simulated balance of{' '}
-                <strong className="text-white font-mono">${createdAccount.initialBalance.toLocaleString()}</strong> is
-                loaded and ready for trading.
+                <strong className="text-white font-mono">
+                  ${createdAccount.initialBalance.toLocaleString()}
+                </strong>{' '}
+                is loaded and ready for institutional simulation.
               </p>
             </div>
 
@@ -96,6 +141,10 @@ export const CheckoutModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
               <div className="flex items-center justify-between border-b border-[#1F293D] pb-2">
                 <span className="text-slate-400">Account Number:</span>
                 <span className="text-[#D4AF37] font-bold text-sm">{createdAccount.accountNumber}</span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[#1F293D] pb-2">
+                <span className="text-slate-400">Model:</span>
+                <span className="text-white font-medium uppercase">{createdAccount.model}</span>
               </div>
               <div className="flex items-center justify-between border-b border-[#1F293D] pb-2">
                 <span className="text-slate-400">Platform:</span>
@@ -153,16 +202,24 @@ export const CheckoutModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
 
               <div>
                 <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                  Evaluation Model
+                  Evaluation Model (6 Models)
                 </label>
                 <select
                   value={checkoutData.model}
-                  onChange={(e: any) => setCheckoutData((prev) => ({ ...prev, model: e.target.value }))}
+                  onChange={(e) =>
+                    setCheckoutData((prev) => ({
+                      ...prev,
+                      model: e.target.value as ChallengeModel
+                    }))
+                  }
                   className="w-full bg-[#0B0F1A] border border-[#1F293D] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
                 >
                   <option value="2-step">2-Step Standard (8% / 5% Target)</option>
                   <option value="1-step">1-Step Rapid (10% Target)</option>
-                  <option value="instant">Instant Simulated Funding</option>
+                  <option value="2-step-advanced">2-Step Advanced (10% / 5%, 12% Max Loss)</option>
+                  <option value="3-step">3-Step Evaluation (6% / 6% / 4% Targets)</option>
+                  <option value="instant">Instant Simulated Capital (Direct Master)</option>
+                  <option value="starter">Starter Low-Cost Challenge (Micro-Risk)</option>
                 </select>
               </div>
             </div>
@@ -183,7 +240,7 @@ export const CheckoutModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
                   }`}
                 >
                   <div className="font-bold text-xs text-white">Ryvexia WebTrader</div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">Built-in high-speed browser terminal</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">High-speed browser terminal with news ticker</div>
                 </button>
 
                 <button
@@ -196,7 +253,7 @@ export const CheckoutModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
                   }`}
                 >
                   <div className="font-bold text-xs text-white">MetaTrader 5 (MT5)</div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">Desktop & Mobile bridge access</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">Institutional desktop & mobile bridge</div>
                 </button>
               </div>
             </div>
@@ -263,6 +320,63 @@ export const CheckoutModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
               </div>
             </div>
 
+            {/* Promotional Discount Code */}
+            <div className="bg-[#0B0F1A] border border-[#1F293D] rounded-xl p-3.5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-[#D4AF37]" /> Promotional Coupon Code
+                </span>
+                <span className="text-[11px] text-slate-500 font-mono">e.g. RYVEXIA15, WELCOME20</span>
+              </div>
+
+              {checkoutData.couponCode ? (
+                <div className="flex items-center justify-between bg-[#131A2A] border border-emerald-500/40 px-3 py-2 rounded-lg">
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="font-mono font-bold text-emerald-400">{checkoutData.couponCode}</span>
+                    <span className="text-slate-300">({checkoutData.discountPct}% OFF applied)</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="text-xs text-rose-400 hover:text-rose-300 font-semibold"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value)}
+                    placeholder="Enter discount code..."
+                    className="flex-1 bg-[#131A2A] border border-[#1F293D] rounded-lg px-3 py-2 text-xs text-white uppercase placeholder:normal-case placeholder:text-slate-500 focus:outline-none focus:border-[#D4AF37] font-mono font-semibold"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-[#1F293D] hover:bg-[#2A374F] text-[#D4AF37] rounded-lg text-xs font-bold transition-colors"
+                  >
+                    Apply
+                  </button>
+                </form>
+              )}
+
+              {couponMessage && (
+                <div
+                  className={`text-[11px] flex items-center gap-1.5 ${
+                    couponMessage.error ? 'text-rose-400' : 'text-emerald-400'
+                  }`}
+                >
+                  {couponMessage.error ? (
+                    <AlertCircle className="w-3 h-3" />
+                  ) : (
+                    <CheckCircle2 className="w-3 h-3" />
+                  )}
+                  {couponMessage.text}
+                </div>
+              )}
+            </div>
+
             {/* Payment Methods */}
             <div>
               <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
@@ -308,8 +422,18 @@ export const CheckoutModal: React.FC<{ isOpen: boolean; onClose: () => void }> =
             {/* Total Summary & Checkout Button */}
             <div className="pt-4 border-t border-[#1F293D] flex items-center justify-between">
               <div>
-                <span className="text-[11px] text-slate-400">One-Time Fee:</span>
-                <div className="text-2xl font-extrabold text-[#D4AF37] font-mono">${totalPrice}</div>
+                <span className="text-[11px] text-slate-400">Total Enrollment Fee:</span>
+                <div className="flex items-baseline gap-2">
+                  <div className="text-2xl font-extrabold text-[#D4AF37] font-mono">${totalPrice}</div>
+                  {discountAmount > 0 && (
+                    <span className="text-xs text-slate-500 line-through font-mono">${rawPrice}</span>
+                  )}
+                </div>
+                {discountAmount > 0 && (
+                  <div className="text-[10px] text-emerald-400 font-mono">
+                    You saved ${discountAmount} ({checkoutData.discountPct}%)
+                  </div>
+                )}
               </div>
 
               <button

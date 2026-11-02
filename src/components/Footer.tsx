@@ -1,9 +1,21 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { ShieldCheck, MapPin, Globe, Clock, ExternalLink } from 'lucide-react';
+import { ShieldCheck, MapPin, Clock } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const { setCurrentView, setActiveTab } = useApp();
+
+  const navigatePublic = (tab: string) => {
+    setCurrentView('public');
+    setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateTrader = (tab: string) => {
+    setCurrentView('trader');
+    setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <footer className="bg-[#080B13] border-t border-[#1F293D] text-slate-400 text-xs mt-auto">
@@ -23,7 +35,7 @@ export const Footer: React.FC = () => {
             <p className="text-slate-400 leading-relaxed text-xs max-w-sm">
               Trade Smart. Prove Your Edge. Institutional evaluation models designed by professional proprietary traders. Simulate institutional execution with up to 90% reward splits.
             </p>
-            <div className="flex items-center gap-4 text-[11px] text-slate-500 pt-2">
+            <div className="flex flex-wrap items-center gap-4 text-[11px] text-slate-500 pt-2">
               <span className="flex items-center gap-1">
                 <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" /> Zurich · Dubai · Singapore
               </span>
@@ -37,51 +49,47 @@ export const Footer: React.FC = () => {
           {/* Column: Evaluation Programs */}
           <div className="space-y-3">
             <div className="text-xs font-semibold text-white uppercase tracking-wider">
-              Evaluation
+              Evaluation Models
             </div>
             <ul className="space-y-2">
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('public');
-                    setActiveTab('challenges');
-                  }}
+                  onClick={() => navigatePublic('challenges')}
                   className="hover:text-white transition-colors"
                 >
-                  2-Step Evaluation
+                  Challenges & Pricing
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('public');
-                    setActiveTab('challenges');
-                  }}
-                  className="hover:text-white transition-colors"
+                  onClick={() => navigatePublic('compare')}
+                  className="hover:text-[#D4AF37] transition-colors"
                 >
-                  1-Step Rapid Evaluation
+                  Compare All 6 Models
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('public');
-                    setActiveTab('challenges');
-                  }}
+                  onClick={() => navigatePublic('how-it-works')}
                   className="hover:text-white transition-colors"
                 >
-                  Instant Simulated Capital
+                  How It Works (5 Steps)
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('public');
-                    setActiveTab('rules');
-                  }}
+                  onClick={() => navigatePublic('affiliate')}
+                  className="hover:text-[#D4AF37] transition-colors"
+                >
+                  Affiliate Partner Program
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigatePublic('blog')}
                   className="hover:text-white transition-colors"
                 >
-                  Scaling Plan ($2M Cap)
+                  Research & Market Insights
                 </button>
               </li>
             </ul>
@@ -95,32 +103,23 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('public');
-                    setActiveTab('rules');
-                  }}
+                  onClick={() => navigatePublic('rules')}
                   className="hover:text-white transition-colors"
                 >
-                  Daily Drawdown Calculation
+                  Daily Drawdown (5% Trailing)
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('public');
-                    setActiveTab('rules');
-                  }}
+                  onClick={() => navigatePublic('rules')}
                   className="hover:text-white transition-colors"
                 >
-                  Maximum Overall Loss
+                  Maximum Overall Loss (10%-12%)
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('public');
-                    setActiveTab('rules');
-                  }}
+                  onClick={() => navigatePublic('rules')}
                   className="hover:text-white transition-colors"
                 >
                   News & Weekend Policy
@@ -128,66 +127,67 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('public');
-                    setActiveTab('rules');
-                  }}
+                  onClick={() => navigatePublic('rules')}
                   className="hover:text-white transition-colors"
                 >
-                  Prohibited Strategies
+                  Prohibited Arbitrage Guidelines
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigatePublic('faq')}
+                  className="hover:text-white transition-colors"
+                >
+                  Searchable Knowledge Base
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Column: Company & Portal */}
+          {/* Column: Platform & Governance */}
           <div className="space-y-3">
             <div className="text-xs font-semibold text-white uppercase tracking-wider">
-              Platforms & Portal
+              Legal & Compliance
             </div>
             <ul className="space-y-2">
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('trader');
-                    setActiveTab('webtrader');
-                  }}
-                  className="hover:text-white transition-colors text-[#D4AF37]"
+                  onClick={() => navigatePublic('terms')}
+                  className="hover:text-white transition-colors"
                 >
-                  Launch WebTrader
+                  Terms of Evaluation
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('trader');
-                    setActiveTab('overview');
-                  }}
+                  onClick={() => navigatePublic('privacy')}
                   className="hover:text-white transition-colors"
                 >
-                  Trader Dashboard
+                  Privacy Policy (FADP/GDPR)
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('public');
-                    setActiveTab('faq');
-                  }}
-                  className="hover:text-white transition-colors"
+                  onClick={() => navigatePublic('refund')}
+                  className="hover:text-[#D4AF37] transition-colors"
                 >
-                  Frequently Asked Questions
+                  100% Fee Refund Policy
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setCurrentView('public');
-                    setActiveTab('contact');
-                  }}
+                  onClick={() => navigatePublic('risk')}
                   className="hover:text-white transition-colors"
                 >
-                  Submit Support Ticket
+                  Risk Disclosure Statement
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigatePublic('contact')}
+                  className="hover:text-white transition-colors"
+                >
+                  Institutional Contact Desk
                 </button>
               </li>
             </ul>
@@ -202,7 +202,7 @@ export const Footer: React.FC = () => {
               IMPORTANT REGULATORY NOTICE & SIMULATED TRADING DISCLOSURE
             </div>
             <p className="mb-2">
-              All accounts and services provided by <strong>RYVEXIA FUNDING</strong> are simulated accounts funded with fictitious virtual balances. All trading activity is performed within a simulated sandbox environment utilizing real-time institutional price feed data. RYVEXIA FUNDING does not operate as a broker, custodian, or financial services provider, and does not accept or custody client investment deposits.
+              All accounts and services provided by <strong>RYVEXIA FUNDING AG</strong> are simulated accounts funded with fictitious virtual balances. All trading activity is performed within a simulated sandbox environment utilizing real-time institutional price feed data. RYVEXIA FUNDING does not operate as a broker, custodian, or financial services provider, and does not accept or custody client investment deposits.
             </p>
             <p>
               Simulated trading performance does not represent actual market execution. Hypothetical or simulated performance results possess inherent limitations; past performance in a simulated evaluation is no indicator of future results. Simulated reward payouts are performance bonuses paid by Ryvexia Funding subject to verification and terms of service.
@@ -211,14 +211,24 @@ export const Footer: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 pt-2">
             <div>
-              © 2026 RYVEXIA FUNDING AG. All rights reserved. Registered under CHE-284.192.831.
+              © 2026 RYVEXIA FUNDING AG. All rights reserved. Registered under CHE-284.192.831 (Zurich, Switzerland).
             </div>
             <div className="flex items-center gap-4">
-              <span>Privacy Policy</span>
+              <button onClick={() => navigatePublic('privacy')} className="hover:text-slate-300">
+                Privacy Policy
+              </button>
               <span aria-hidden="true">·</span>
-              <span>Terms of Evaluation</span>
+              <button onClick={() => navigatePublic('terms')} className="hover:text-slate-300">
+                Terms of Evaluation
+              </button>
               <span aria-hidden="true">·</span>
-              <span>Risk Disclosure</span>
+              <button onClick={() => navigatePublic('refund')} className="hover:text-slate-300">
+                Refund Policy
+              </button>
+              <span aria-hidden="true">·</span>
+              <button onClick={() => navigatePublic('risk')} className="hover:text-slate-300">
+                Risk Disclosure
+              </button>
             </div>
           </div>
         </div>

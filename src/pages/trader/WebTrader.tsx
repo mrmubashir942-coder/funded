@@ -15,6 +15,7 @@ import {
   Play
 } from 'lucide-react';
 import { TradeOrder } from '../../types';
+import { MarketNewsTicker } from '../../components/MarketNewsTicker';
 
 export const WebTrader: React.FC = () => {
   const {
@@ -199,6 +200,9 @@ export const WebTrader: React.FC = () => {
           <span className="font-bold text-emerald-400 uppercase">{activeAccount?.status}</span>
         </div>
       </div>
+
+      {/* Rotating Market News Wire Ticker */}
+      <MarketNewsTicker onSelectSymbol={(sym) => setActiveSymbol(sym)} activeSymbol={activeSymbol} />
 
       {/* Main Terminal Grid: Market Watch (Left) + Central Chart (Center) + Order Entry (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">

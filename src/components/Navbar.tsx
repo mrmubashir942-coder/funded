@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import {
-  Shield,
   TrendingUp,
   User as UserIcon,
   Bell,
   LogOut,
   ChevronDown,
   Sparkles,
-  Layers,
   ArrowRight,
   Sliders,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  Award,
+  BookOpen,
+  Trophy,
+  Tag,
+  ShieldAlert,
+  BarChart3,
+  FileText,
+  Users
 } from 'lucide-react';
 
 export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => void }> = ({
@@ -38,22 +44,23 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showMorePublicMenu, setShowMorePublicMenu] = useState(false);
 
   const unreadNotifs = notifications.filter((n) => !n.read).length;
 
   return (
     <header className="sticky top-0 z-50 bg-[#0B0F1A]/95 backdrop-blur-md border-b border-[#1F293D]">
       {/* Compliance Notice Micro-strip */}
-      <div className="bg-[#131A2A] text-slate-400 text-[11px] py-1 px-4 text-center border-b border-[#1F293D]/50 flex items-center justify-center gap-2">
+      <div className="bg-[#131A2A] text-slate-400 text-[11px] py-1 px-4 text-center border-b border-[#1F293D]/50 flex items-center justify-center gap-2 overflow-x-auto whitespace-nowrap">
         <span className="font-semibold text-[#D4AF37]">SIMULATED EVALUATION ENVIRONMENT</span>
         <span aria-hidden="true" className="text-slate-600">·</span>
         <span>All capital & trading positions are strictly educational and simulated</span>
         <span aria-hidden="true" className="text-slate-600">·</span>
-        <span className="text-slate-300 font-mono">UTC Server: 22:14:00</span>
+        <span className="text-slate-300 font-mono">Server Time: 22:14:00 UTC</span>
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
         {/* Zone 1: Single text element wordmark */}
         <div className="flex items-center gap-3 shrink-0">
           <button
@@ -77,8 +84,8 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
           </button>
         </div>
 
-        {/* Zone 2: Navigation Links (Single-line, concise) */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+        {/* Zone 2: Navigation Links */}
+        <nav className="hidden lg:flex items-center gap-5 text-xs font-medium">
           {currentView === 'public' ? (
             <>
               <button
@@ -95,7 +102,15 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
                   activeTab === 'challenges' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                Challenges & Pricing
+                Challenges
+              </button>
+              <button
+                onClick={() => setActiveTab('compare')}
+                className={`transition-colors whitespace-nowrap ${
+                  activeTab === 'compare' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                Compare Plans
               </button>
               <button
                 onClick={() => setActiveTab('rules')}
@@ -106,29 +121,71 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
                 Trading Rules
               </button>
               <button
-                onClick={() => setActiveTab('about')}
+                onClick={() => setActiveTab('how-it-works')}
                 className={`transition-colors whitespace-nowrap ${
-                  activeTab === 'about' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                  activeTab === 'how-it-works' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                About Us
+                How It Works
               </button>
               <button
-                onClick={() => setActiveTab('faq')}
+                onClick={() => setActiveTab('affiliate')}
                 className={`transition-colors whitespace-nowrap ${
-                  activeTab === 'faq' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                  activeTab === 'affiliate' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                FAQ
+                Affiliates
               </button>
               <button
-                onClick={() => setActiveTab('contact')}
+                onClick={() => setActiveTab('blog')}
                 className={`transition-colors whitespace-nowrap ${
-                  activeTab === 'contact' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                  activeTab === 'blog' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                Contact
+                Insights
               </button>
+
+              {/* More Public Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowMorePublicMenu(!showMorePublicMenu)}
+                  className="flex items-center gap-1 text-slate-300 hover:text-white transition-colors"
+                >
+                  <span>Company</span>
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+                {showMorePublicMenu && (
+                  <div className="absolute left-0 mt-2 w-44 bg-[#131A2A] border border-[#1F293D] rounded-xl shadow-2xl p-1.5 z-50">
+                    <button
+                      onClick={() => {
+                        setActiveTab('about');
+                        setShowMorePublicMenu(false);
+                      }}
+                      className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-[#1F293D] transition-colors"
+                    >
+                      About Ryvexia
+                    </button>
+                    <button
+                      onClick={() => {
+                        setActiveTab('faq');
+                        setShowMorePublicMenu(false);
+                      }}
+                      className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-[#1F293D] transition-colors"
+                    >
+                      Searchable FAQ
+                    </button>
+                    <button
+                      onClick={() => {
+                        setActiveTab('contact');
+                        setShowMorePublicMenu(false);
+                      }}
+                      className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-[#1F293D] transition-colors"
+                    >
+                      Contact Desk
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           ) : currentView === 'trader' ? (
             <>
@@ -146,7 +203,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
                   activeTab === 'webtrader' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                <TrendingUp className="w-4 h-4 text-[#D4AF37]" />
+                <TrendingUp className="w-3.5 h-3.5 text-[#D4AF37]" />
                 WebTrader
               </button>
               <button
@@ -155,7 +212,43 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
                   activeTab === 'analytics' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                Performance
+                Analytics
+              </button>
+              <button
+                onClick={() => setActiveTab('journal')}
+                className={`transition-colors whitespace-nowrap flex items-center gap-1 ${
+                  activeTab === 'journal' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                Journal
+              </button>
+              <button
+                onClick={() => setActiveTab('leaderboard')}
+                className={`transition-colors whitespace-nowrap flex items-center gap-1 ${
+                  activeTab === 'leaderboard' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                Leaderboard
+              </button>
+              <button
+                onClick={() => setActiveTab('achievements')}
+                className={`transition-colors whitespace-nowrap flex items-center gap-1 ${
+                  activeTab === 'achievements' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <Award className="w-3.5 h-3.5 text-[#D4AF37]" />
+                Badges
+              </button>
+              <button
+                onClick={() => setActiveTab('loyalty')}
+                className={`transition-colors whitespace-nowrap flex items-center gap-1 ${
+                  activeTab === 'loyalty' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+                Edge Club
               </button>
               <button
                 onClick={() => setActiveTab('rewards')}
@@ -163,7 +256,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
                   activeTab === 'rewards' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                Simulated Rewards
+                Payouts
               </button>
               <button
                 onClick={() => setActiveTab('accounts')}
@@ -171,7 +264,15 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
                   activeTab === 'accounts' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                My Accounts
+                Accounts
+              </button>
+              <button
+                onClick={() => setActiveTab('profile')}
+                className={`transition-colors whitespace-nowrap ${
+                  activeTab === 'profile' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                KYC & Profile
               </button>
               <button
                 onClick={() => setActiveTab('support')}
@@ -179,7 +280,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
                   activeTab === 'support' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                Support Desk
+                Support
               </button>
             </>
           ) : (
@@ -211,7 +312,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
               </button>
               <button
                 onClick={() => setActiveTab('rules')}
-                className={`transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+                className={`transition-colors whitespace-nowrap flex items-center gap-1 ${
                   activeTab === 'rules' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
                 }`}
               >
@@ -234,20 +335,65 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
               >
                 Trade Tape
               </button>
+              <button
+                onClick={() => setActiveTab('coupons')}
+                className={`transition-colors whitespace-nowrap flex items-center gap-1 ${
+                  activeTab === 'coupons' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <Tag className="w-3.5 h-3.5 text-[#D4AF37]" />
+                Coupons
+              </button>
+              <button
+                onClick={() => setActiveTab('affiliates')}
+                className={`transition-colors whitespace-nowrap flex items-center gap-1 ${
+                  activeTab === 'affiliates' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <Users className="w-3.5 h-3.5" />
+                Affiliates
+              </button>
+              <button
+                onClick={() => setActiveTab('content')}
+                className={`transition-colors whitespace-nowrap flex items-center gap-1 ${
+                  activeTab === 'content' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                CMS
+              </button>
+              <button
+                onClick={() => setActiveTab('audit')}
+                className={`transition-colors whitespace-nowrap flex items-center gap-1 ${
+                  activeTab === 'audit' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+                Audit Logs
+              </button>
+              <button
+                onClick={() => setActiveTab('analytics')}
+                className={`transition-colors whitespace-nowrap flex items-center gap-1 ${
+                  activeTab === 'analytics' ? 'text-[#D4AF37] font-semibold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <BarChart3 className="w-3.5 h-3.5 text-emerald-400" />
+                Analytics & Tests
+              </button>
             </>
           )}
         </nav>
 
         {/* Zone 3: Actions & Profile */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
           {/* Quick Environment View Switcher (Interactive Segmented Control) */}
-          <div className="hidden lg:flex items-center bg-[#131A2A] p-1 rounded-lg border border-[#1F293D] text-xs font-medium">
+          <div className="flex items-center bg-[#131A2A] p-0.5 rounded-lg border border-[#1F293D] text-[11px] font-medium">
             <button
               onClick={() => {
                 setCurrentView('public');
                 setActiveTab('home');
               }}
-              className={`px-2.5 py-1 rounded transition-colors ${
+              className={`px-2 py-1 rounded transition-colors ${
                 currentView === 'public'
                   ? 'bg-[#1F293D] text-[#D4AF37] shadow-sm font-semibold'
                   : 'text-slate-400 hover:text-white'
@@ -259,21 +405,23 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
               onClick={() => {
                 switchRole('trader');
                 setCurrentView('trader');
+                setActiveTab('overview');
               }}
-              className={`px-2.5 py-1 rounded transition-colors ${
+              className={`px-2 py-1 rounded transition-colors ${
                 currentView === 'trader'
                   ? 'bg-[#1F293D] text-[#D4AF37] shadow-sm font-semibold'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              Trader Hub
+              Trader
             </button>
             <button
               onClick={() => {
                 switchRole('admin');
                 setCurrentView('admin');
+                setActiveTab('overview');
               }}
-              className={`px-2.5 py-1 rounded transition-colors ${
+              className={`px-2 py-1 rounded transition-colors ${
                 currentView === 'admin'
                   ? 'bg-[#1F293D] text-[#D4AF37] shadow-sm font-semibold'
                   : 'text-slate-400 hover:text-white'
@@ -285,18 +433,18 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
 
           {/* Active Account Pill (when in trader portal) */}
           {currentView === 'trader' && activeAccount && (
-            <div className="relative">
+            <div className="relative hidden sm:block">
               <button
                 onClick={() => setShowAccountDropdown(!showAccountDropdown)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#131A2A] border border-[#1F293D] hover:border-[#D4AF37]/50 transition-colors text-xs"
+                className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#131A2A] border border-[#1F293D] hover:border-[#D4AF37]/50 transition-colors text-xs"
               >
                 <div className="flex flex-col text-left">
-                  <span className="font-semibold text-white font-mono">{activeAccount.accountNumber}</span>
+                  <span className="font-semibold text-white font-mono text-[11px]">{activeAccount.accountNumber}</span>
                   <span className="text-[10px] text-slate-400">
-                    Eq: <span className="text-[#D4AF37] font-mono tabular-nums">${activeAccount.equity.toLocaleString()}</span>
+                    <span className="text-[#D4AF37] font-mono tabular-nums">${activeAccount.equity.toLocaleString()}</span>
                   </span>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>
 
               {showAccountDropdown && (
@@ -423,8 +571,8 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
                   referrerPolicy="no-referrer"
                   className="w-7 h-7 rounded-md object-cover border border-[#D4AF37]/40"
                 />
-                <span className="hidden sm:inline-block text-xs font-semibold text-white">
-                  {currentUser.name}
+                <span className="hidden xl:inline-block text-xs font-semibold text-white">
+                  {currentUser.name.split(' ')[0]}
                 </span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
@@ -463,6 +611,16 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
                     <button
                       onClick={() => {
                         setShowUserDropdown(false);
+                        setCurrentView('trader');
+                        setActiveTab('profile');
+                      }}
+                      className="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:bg-[#1F293D] rounded-md transition-colors"
+                    >
+                      KYC & Security Profile
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowUserDropdown(false);
                         switchRole(currentUser.role === 'admin' ? 'trader' : 'admin');
                       }}
                       className="w-full text-left px-3 py-1.5 text-xs text-[#D4AF37] hover:bg-[#1F293D] rounded-md transition-colors font-medium"
@@ -488,9 +646,9 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
           ) : (
             <button
               onClick={onOpenAuth}
-              className="px-3.5 py-1.5 text-xs font-semibold text-slate-200 hover:text-white bg-[#131A2A] border border-[#1F293D] rounded-lg hover:border-slate-600 transition-colors"
+              className="px-3 py-1.5 text-xs font-semibold text-slate-200 hover:text-white bg-[#131A2A] border border-[#1F293D] rounded-lg hover:border-slate-600 transition-colors"
             >
-              Client Login
+              Login
             </button>
           )}
 
@@ -498,7 +656,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
           {currentView === 'public' ? (
             <button
               onClick={onOpenCheckout}
-              className="px-4 py-2 text-xs font-bold text-[#0B0F1A] bg-gradient-to-r from-[#D4AF37] to-[#E5C158] hover:brightness-110 rounded-lg shadow-sm transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
+              className="px-3.5 py-1.5 text-xs font-bold text-[#0B0F1A] bg-gradient-to-r from-[#D4AF37] to-[#E5C158] hover:brightness-110 rounded-lg shadow-sm transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
             >
               <span>Get Funded</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -506,7 +664,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
           ) : currentView === 'trader' ? (
             <button
               onClick={() => setActiveTab('webtrader')}
-              className="px-3.5 py-2 text-xs font-bold text-[#0B0F1A] bg-gradient-to-r from-[#D4AF37] to-[#E5C158] hover:brightness-110 rounded-lg shadow-sm transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
+              className="px-3.5 py-1.5 text-xs font-bold text-[#0B0F1A] bg-gradient-to-r from-[#D4AF37] to-[#E5C158] hover:brightness-110 rounded-lg shadow-sm transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
             >
               <span>Terminal</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -514,7 +672,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void; onOpenCheckout: () => vo
           ) : (
             <button
               onClick={() => setActiveTab('accounts')}
-              className="px-3.5 py-2 text-xs font-bold text-[#0B0F1A] bg-gradient-to-r from-[#D4AF37] to-[#E5C158] hover:brightness-110 rounded-lg shadow-sm transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
+              className="px-3.5 py-1.5 text-xs font-bold text-[#0B0F1A] bg-gradient-to-r from-[#D4AF37] to-[#E5C158] hover:brightness-110 rounded-lg shadow-sm transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
             >
               <span>Risk Desk</span>
               <ArrowRight className="w-3.5 h-3.5" />
